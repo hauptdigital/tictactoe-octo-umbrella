@@ -5,12 +5,16 @@ export default function Board() {
   const [squares, setSquares] = React.useState(Array(9).fill(null));
   const [xIsNext, setXIsNext] = React.useState(true);
 
-  const player = xIsNext ? "X" : "O";
-  const status = `Next player: ${player}`;
+  const nextPlayer = xIsNext ? "X" : "O";
+  const winner = calculateWinner(squares);
+  const status = winner ? `Winner: ${winner}` : `Next Player: ${nextPlayer}`;
 
   function handleClick(squareIndex) {
+    if (squares[squareIndex] || winner) {
+      return;
+    }
     const squaresCopy = squares.slice();
-    squaresCopy[squareIndex] = player;
+    squaresCopy[squareIndex] = nextPlayer;
     setXIsNext(!xIsNext);
     setSquares(squaresCopy);
   }
@@ -35,4 +39,44 @@ export default function Board() {
       </div>
     </div>
   );
+}
+
+function calculateWinner(squares) {
+  const winningCombinations = [
+    // Rows
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    // Columns
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    // Diagonal
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+  let winner = null;
+  winningCombinations.find(combination => {
+    let [a, b, c] = combination;
+    if (
+      squares[a] === squares[b] &&
+      squares[b] === squares[c] &&
+      squares[a] !== null
+    ) {
+      winner = squares[a];
+      return true;
+    }
+  });
+
+  // winningCombinations.forEach(combination => {
+  //   let [a, b, c] = combination;
+  //   if (
+  //     squares[a] === squares[b] &&
+  //     squares[b] === squares[c] &&
+  //     squares[a] !== null
+  //   ) {
+  //     winner = squares[a];
+  //   }
+  // });
+  return winner;
 }
